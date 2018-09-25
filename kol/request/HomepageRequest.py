@@ -12,9 +12,9 @@ class HomepageRequest(GenericRequest):
     def __init__(self, session, serverNumber=0):
         super(HomepageRequest, self).__init__(session)
         if serverNumber > 0:
-            self.url = "http://www%s.kingdomofloathing.com/main.php" % serverNumber
+            self.url = "https://www%s.kingdomofloathing.com/main.php" % serverNumber
         else:
-            self.url = "http://www.kingdomofloathing.com/"
+            self.url = "https://www.kingdomofloathing.com/"
 
     def parseResponse(self):
         # Get the URL of the server that we were told to use.
@@ -26,9 +26,9 @@ class HomepageRequest(GenericRequest):
             raise Error.Error("Unable to determine server URL from: " + self.response.url, Error.LOGIN_FAILED_GENERIC)
 
         # Get the user's challenge string which is used to provide a more secure login mechanism.
-        loginChallengePattern = PatternManager.getOrCompilePattern('loginChallenge')
-        challengeMatch = loginChallengePattern.search(self.responseText)
-        if challengeMatch:
-            self.responseData["loginChallenge"] = challengeMatch.group(1)
-        else:
-            raise Error.Error("Unable to find login challenge:\n" + self.responseText, Error.LOGIN_FAILED_GENERIC)
+        #loginChallengePattern = PatternManager.getOrCompilePattern('loginChallenge')
+        #challengeMatch = loginChallengePattern.search(self.responseText)
+        #if challengeMatch:
+        #    self.responseData["loginChallenge"] = challengeMatch.group(1)
+        #else:
+        #    raise Error.Error("Unable to find login challenge:\n" + self.responseText, Error.LOGIN_FAILED_GENERIC)

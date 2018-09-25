@@ -34,6 +34,7 @@ class Session(object):
 
         self.userName = username
         self.userPasswordHash = hashlib.md5(password).hexdigest()
+        self.password = password;
 
         # Grab the KoL homepage.
         homepageRequest = HomepageRequest(self, serverNumber=serverNumber)
@@ -41,7 +42,7 @@ class Session(object):
         self.serverURL = homepageResponse["serverURL"]
 
         # Perform the login.
-        loginRequest = LoginRequest(self, homepageResponse["loginChallenge"])
+        loginRequest = LoginRequest(self, "")
         loginRequest.doRequest()
 
         # Load the charpane once to make StatusRequest report the rollover time
