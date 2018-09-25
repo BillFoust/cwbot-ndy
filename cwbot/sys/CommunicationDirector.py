@@ -18,7 +18,7 @@ from cwbot.kolextra.request.GetEventMessageRequest \
 from kol.request.ClanWhitelistRequest import ClanWhitelistRequest
 from cwbot.kolextra.request.ClanDetailedMemberRequest \
                      import ClanDetailedMemberRequest
-
+from cwbot.kolextra.request.ClanConsultRequest import ClanConsultRequest
 
 class CommunicationDirector(EventSubsystem.EventCapable,
                             HeartbeatSubsystem.HeartbeatCapable):
@@ -189,7 +189,16 @@ class CommunicationDirector(EventSubsystem.EventCapable,
                 self._log.debug("New kmail notification.")
                 newKmail = True
                 ignoreMessage = True
-            # reject message from self
+            # handle carnival notification
+            elif x['type'].lower() == "notification:carnival":
+                self._log.debug("New consultation notification.")
+                uid = x['userId']
+                r = ClanConsultRequest(self._s, uid)
+                d = tryRequest(r)
+                replyStr = ("{}, I've replied to a consultation request for you.".format(x['userName']))
+                self.whisper(uid,replyStr) 
+                ignoreMessage = True
+			# reject message from self
             elif x.get('userId', -1) == self._s.userId:
                 self._log.debug("rejected: message from myself: {}".format(x))
                 ignoreMessage = True
