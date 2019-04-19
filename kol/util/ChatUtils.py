@@ -367,12 +367,18 @@ def cleanChatText(dirtyText):
         textStart = match.end()
         textEnd = textStart
         found = False
+        foundTag = False
         while found == False:
-            if text[textEnd] == url[urlIndex]:
-                textEnd += 1
+            if foundTag == True:
+                if text[textEnd] == '>':
+                    foundTag = False 
+            elif text[textEnd] == '<':
+                foundTag = True
+            elif text[textEnd] == url[urlIndex]:
                 urlIndex += 1
-            elif text[textEnd] == ' ':
-                textEnd += 1
+            
+            # Always advance the textEnd
+            textEnd += 1
 
             if urlIndex == len(url):
                 found = True
