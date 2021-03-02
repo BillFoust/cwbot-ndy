@@ -1,5 +1,5 @@
 import weakref
-import Queue
+import queue
 import time
 import logging
 import uuid
@@ -115,7 +115,7 @@ class HeartbeatSubsystem(object):
                 task = None
                 try:
                     task = self.queue.get(True, 0.1)
-                except Queue.Empty:
+                except queue.Empty:
                     pass
                 if task is not None:
                     with task.lock:
@@ -133,7 +133,7 @@ class HeartbeatSubsystem(object):
             self._n = numThreads
             self._t = period
             self._stopEvent = stopEvent
-            self.queue = Queue.Queue()
+            self.queue = queue.Queue()
             self._objs = []
             self._lock = threading.RLock()
             self._threads = []

@@ -1,7 +1,7 @@
 import time
 import random
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import socket
 from cwbot.modules.BaseChatModule import BaseChatModule
 from cwbot.common.kmailContainer import Kmail
@@ -18,8 +18,8 @@ def _versionGreater(new, old, rank):
  
     if rank not in _ranks:
         raise KeyError("invalid rank")
-    newSeries = map(int, new.split("."))
-    oldSeries = map(int, old.split("."))
+    newSeries = list(map(int, new.split(".")))
+    oldSeries = list(map(int, old.split(".")))
     for i in range(_ranks[rank]):
         if newSeries[i] > oldSeries[i]:
             return True
@@ -67,7 +67,7 @@ class AboutModule(BaseChatModule):
         if self._notifyOn not in _ranks:
             raise KeyError("Invalid notify_on specification. Valid "
                            " values are: {}"
-                           .format(', '.join(_ranks.keys())))
+                           .format(', '.join(list(_ranks.keys()))))
         
         
     def initialize(self, state, initData):
@@ -76,8 +76,8 @@ class AboutModule(BaseChatModule):
         self._lastAvailableVersion = state['available']
         kmailed = state['kmailed']
         pmed = state['pm']
-        self._kmailed = dict((int(k), v) for k,v in kmailed.items())
-        self._privateMessaged = dict((int(k), v) for k,v in pmed.items())
+        self._kmailed = dict((int(k), v) for k,v in list(kmailed.items()))
+        self._privateMessaged = dict((int(k), v) for k,v in list(pmed.items()))
         oldVersion = state['version']
         if oldVersion != self.properties.version:
             self._resetNotified()
@@ -152,7 +152,7 @@ class AboutModule(BaseChatModule):
     def _checkNew(self):
         self.log("Checking for new version...")
         try:
-            txt = urllib2.urlopen(
+            txt = urllib.request.urlopen(
                     'http://sourceforge.net/projects/cwbot/files/').read()
             m = re.search(r'Download cwbot_(\d+\.\d+\.\d+)\.zip \(', txt)
             if m is not None:
@@ -170,7 +170,7 @@ class AboutModule(BaseChatModule):
             else:
                 self.log("Could not check for new version...")
             self._lastCheck = time.time()
-        except (urllib2.URLError, socket.timeout):
+        except (urllib.error.URLError, socket.timeout):
             self.log("Error loading site for update")
             self._lastAvailableVersion = None
             

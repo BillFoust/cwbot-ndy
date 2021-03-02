@@ -42,7 +42,7 @@ class ClanRaidLogRequest(GenericRequest):
             self.responseData['id'] = int(self.raidId)
         else:
             foundId = False
-            for k,regex in self._idPatterns.items():
+            for k,regex in list(self._idPatterns.items()):
                 m = regex.search(txt)
                 if m is not None:
                     foundId = True 

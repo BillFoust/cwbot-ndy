@@ -1,5 +1,5 @@
 import kol.Error as Error
-from GenericRequest import GenericRequest
+from .GenericRequest import GenericRequest
 from kol.manager import PatternManager
 
 class CursePlayerRequest(GenericRequest):
@@ -39,5 +39,5 @@ class CursePlayerRequest(GenericRequest):
 
             successPattern = PatternManager.getOrCompilePattern('fireArrowSuccess')
             if not successPattern.search(self.responseText):
-                print self.responseText
+                print((self.responseText))
                 raise Error.Error("Unknown error.", Error.REQUEST_GENERIC)

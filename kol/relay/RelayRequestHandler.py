@@ -1,7 +1,7 @@
 from kol.request.DynamicRequest import DynamicRequest
 from kol.util import Report
 
-from BaseHTTPServer import BaseHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler
 
 class RelayRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):

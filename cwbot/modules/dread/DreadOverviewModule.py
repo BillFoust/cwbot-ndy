@@ -66,9 +66,9 @@ class DreadOverviewModule(BaseDungeonModule):
     
     def _configure(self, config):
         try:
-            self._notifyPercent = map(int, stringToList(
+            self._notifyPercent = list(map(int, stringToList(
                                             config.setdefault('update-percent',
-                                                        "25,50,75,90,100")))
+                                                        "25,50,75,90,100"))))
         except ValueError:
             raise FatalError("update-percent must be a list of integers")
         try:
@@ -183,7 +183,7 @@ class DreadOverviewModule(BaseDungeonModule):
                 # is non-zero (somebody might be in a fight or something!)
 
                 probFavoring = {k: min(max(0.05, v), 0.95)
-                                for k,v in probFavoring.items()}                
+                                for k,v in list(probFavoring.items())}                
                 
                 # probabilities of these kills (newKillsA and newKillsB)
                 # under both assumptions

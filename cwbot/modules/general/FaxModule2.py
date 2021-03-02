@@ -8,7 +8,8 @@ import xmltodict
 from cwbot.common.kmailContainer import Kmail
 from unidecode import unidecode
 from xml.parsers.expat import ExpatError
-from urllib2 import HTTPError, URLError, urlopen
+from urllib.error import HTTPError, URLError
+from urllib.request import urlopen
 from collections import defaultdict, namedtuple, deque
 from fuzzywuzzy import fuzz #@UnresolvedImport
 from cwbot.modules.BaseChatModule import BaseChatModule
@@ -146,7 +147,7 @@ class FaxModule2(BaseChatModule):
             self._xmlAddresses = config.setdefault('xml', self._defaultXml)
             success = config.setdefault('success', self._defaultSuccess)
             self._success = {''.join(k.lower()): v
-                             for k,v in success.items()}
+                             for k,v in list(success.items())}
         except ValueError:
             raise Exception("Fax Module config error: "
                             "faxbot_timeout, url_timeout must be integral")
@@ -178,7 +179,7 @@ class FaxModule2(BaseChatModule):
         
         # make list of all possible names/codes/aliases
         nameList = {}
-        for k,v in self._monsters.items():
+        for k,v in list(self._monsters.items()):
             names = set(chain.from_iterable(val.nameList for val in v))
             nameList[k] = names
         
@@ -189,7 +190,7 @@ class FaxModule2(BaseChatModule):
 
         # first, check for exact code/name/alias matches
         matches = []
-        for k,names in nameList.items():
+        for k,names in list(nameList.items()):
             if any(True for name in names if sArgs == simplify(name)):
                 matches.append(k)
         if len(matches) == 1:
@@ -199,12 +200,12 @@ class FaxModule2(BaseChatModule):
         # next, check for "close" matches
         scoreDiff = 15
         scores = {}
-        for k,names in nameList.items():
+        for k,names in list(nameList.items()):
             score1 = max(fuzz.partial_token_set_ratio(simplify(name), sArgs)
                          for name in names) 
             scores[k] = score1
         maxScore = max(scores.values())
-        fuzzyMatchKeys = set(k for k,v in scores.items()
+        fuzzyMatchKeys = set(k for k,v in list(scores.items())
                              if v >= maxScore - scoreDiff)
 
         # also check for args as a subset of string or code
@@ -212,7 +213,7 @@ class FaxModule2(BaseChatModule):
         dArgs = detokenize(args)
         
         subsetMatchKeys = set()
-        for k, names in nameList.items():
+        for k, names in list(nameList.items()):
             if any(True for name in names if dArgs in detokenize(name)):
                 subsetMatchKeys.add(k)
         
@@ -359,19 +360,19 @@ class FaxModule2(BaseChatModule):
     
     def _refreshMonsterList(self):
         genLen = lambda gen: sum(1 for _ in gen)
-        entryCount = genLen(chain.from_iterable(self._monsters.values()))
+        entryCount = genLen(chain.from_iterable(list(self._monsters.values())))
         self.log("Updating xml... ({} entries)".format(entryCount))
-        for _,v in self._monsters.items():
+        for _,v in list(self._monsters.items()):
             v = [entry for entry in v
-                 if entry.faxbot.xml in self._xmlAddresses.values()]
+                 if entry.faxbot.xml in list(self._xmlAddresses.values())]
         
         # clear empty entries
         monsters = defaultdict(list)
         monsters.update(
-                    {k:v for k,v in self._monsters.items() if v})
+                    {k:v for k,v in list(self._monsters.items()) if v})
         self._monsters = monsters
 
-        entryCount2 = genLen(chain.from_iterable(self._monsters.values()))
+        entryCount2 = genLen(chain.from_iterable(list(self._monsters.values())))
         if entryCount != entryCount2:
             self._log("Removed {} entries due to config file mismatch."
                       .format(entryCount - entryCount2))
@@ -394,8 +395,8 @@ class FaxModule2(BaseChatModule):
                              .format(e.__class__.__name__, e.args))
                 else:
                     entryCount = genLen(chain.from_iterable(
-                                                    self._monsters.values()))
-                    d1 = d[d.keys()[0]]
+                                                    list(self._monsters.values())))
+                    d1 = d[list(d.keys())[0]]
                     try:
                         faxbot = _Faxbot(d1['botdata']['name'].encode('ascii'), 
                                          int(d1['botdata']['playerid']),
@@ -412,24 +413,24 @@ class FaxModule2(BaseChatModule):
                         newMonsters[mname] = FaxMonsterEntry(name, 
                                                              code, 
                                                              faxbot)
-                        for n,alias in self._alias.items():
+                        for n,alias in list(self._alias.items()):
                             if n.lower().strip() in [mname, 
                                                      code, 
                                                      name.lower().strip()]:
                                 newMonsters[mname].addAlias(alias)
 
-                    for k,v in self._monsters.items():
+                    for k,v in list(self._monsters.items()):
                         self._monsters[k] = [entry for entry in v
                                              if entry.faxbot.xml != address]
-                    for mname,monster in newMonsters.items():
+                    for mname,monster in list(newMonsters.items()):
                         self._monsters[mname].append(monster)
                     entryCount2 = genLen(chain.from_iterable(
-                                                    self._monsters.values()))
+                                                    list(self._monsters.values())))
                     
                     # clear empty entries
                     monsters = defaultdict(list)
                     monsters.update(
-                                {k:v for k,v in self._monsters.items() if v})
+                                {k:v for k,v in list(self._monsters.items()) if v})
                     self._monsters = monsters
                     self.log("Net change of {} entries from {} xml ({} -> {})"
                               .format(entryCount2 - entryCount, 

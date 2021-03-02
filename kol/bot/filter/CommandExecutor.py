@@ -40,7 +40,7 @@ def botProcessChat(context, **kwargs):
                         if bot.session != None and bot.session.isConnected and hasattr(bot.session, "chatManager"):
                             try:
                                 bot.sendChatMessage(command)
-                            except AttributeError, inst:
+                            except AttributeError as inst:
                                 Report.error("chat", "Could not execute command: %s" % command, inst)
                 else:
                     kwargs["bot"].sendChatMessage(command)

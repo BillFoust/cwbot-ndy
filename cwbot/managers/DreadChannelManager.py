@@ -80,7 +80,7 @@ class DreadChannelManager(BaseClanDungeonChannelManager):
                                      'The Woods', 
                                      'The Castle', 
                                      'Miscellaneous']
-        d = {k: v for k,v in raidlog.items() if k in relevant_keys}
+        d = {k: v for k,v in list(raidlog.items()) if k in relevant_keys}
         d = self._dbMatchRaidLog(d)
         d['events'] = [e for e in d['events'] 
                            if e['category'] in relevant_event_categories]

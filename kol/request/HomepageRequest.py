@@ -1,5 +1,5 @@
 import kol.Error as Error
-from GenericRequest import GenericRequest
+from .GenericRequest import GenericRequest
 from kol.manager import PatternManager
 
 class HomepageRequest(GenericRequest):

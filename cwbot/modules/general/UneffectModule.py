@@ -54,7 +54,7 @@ class UneffectModule(BaseChatModule):
                     if effects is None:
                         return ("I am out of SGEEAs. "
                                 "Please help and send me a few!")
-                    eids = effects.keys()
+                    eids = list(effects.keys())
                     eids.sort()
                     s = "Current effects: "
                     strings = [("{}={}".format(eid, effects[eid]))

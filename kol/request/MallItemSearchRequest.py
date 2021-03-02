@@ -1,5 +1,5 @@
 import kol.Error as Error
-from GenericRequest import GenericRequest
+from .GenericRequest import GenericRequest
 from kol.database import ItemDatabase
 from kol.manager import PatternManager
 from kol.util import Report
@@ -62,7 +62,7 @@ class MallItemSearchRequest(GenericRequest):
                 if matchText.find('limited"') >= 0:
                     item["hitLimit"] = True
                 items.append(item)
-            except Error.Error, inst:
+            except Error.Error as inst:
                 if inst.code == Error.ITEM_NOT_FOUND:
                     Report.info("itemdatabase", "Unrecognized item found in mall search: %s" % itemId, inst)
                 else:

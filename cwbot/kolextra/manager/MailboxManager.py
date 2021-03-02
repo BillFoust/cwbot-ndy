@@ -145,7 +145,7 @@ class MailboxManager(object):
                     giftPackages[item["id"]] = item["quantity"]
     
             # Open all of the gift packages.
-            for itemId,quantity in giftPackages.iteritems():
+            for itemId,quantity in list(giftPackages.items()):
                 for _i in range(quantity):
                     r = UseItemRequest(self.session, itemId)
                     tryRequest(r)

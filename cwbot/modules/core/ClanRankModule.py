@@ -112,8 +112,8 @@ class ClanRankModule(BaseModule):
         safeTitles = stringToList(config.setdefault('safe_titles',
                                                     "DO NOT DELETE, "
                                                     "DO NOT ERASE"))
-        self._safeRanks = map(_rankTransform, safeRanks)
-        self._safeTitles = map(_rankTransform, safeTitles)
+        self._safeRanks = list(map(_rankTransform, safeRanks))
+        self._safeTitles = list(map(_rankTransform, safeTitles))
         self._bootMessage = toTypeOrNone(config.setdefault('boot_message',
                                                            "none"))
         self._simulate = stringToBool(config.setdefault('simulate', "false"))
@@ -138,7 +138,7 @@ class ClanRankModule(BaseModule):
                                    'min_days_in_clan': 0,
                                    'next_rank': "none"}})
         
-        for rule in rules.values():
+        for rule in list(rules.values()):
             rule.setdefault('demotion_allowed', True)
             rule.setdefault('min_karma', 0)
             rule.setdefault('min_days_until_next_promotion', 0)
@@ -171,7 +171,7 @@ class ClanRankModule(BaseModule):
         
         # load promotion rules
         self._promotionRules = {}
-        for rankname,rule in self._ruleConfig.items():
+        for rankname,rule in list(self._ruleConfig.items()):
             key = _rankTransform(rankname)
             nextRankName = toTypeOrNone(rule['next_rank'])
             nextkey = _rankTransform(nextRankName) if nextRankName else None
@@ -179,11 +179,11 @@ class ClanRankModule(BaseModule):
             
             if key not in self._ranks:
                 raise FatalError("Invalid clan rank: {} (available ranks: {})"
-                                 .format(key, ", ".join(self._ranks.keys())))
+                                 .format(key, ", ".join(list(self._ranks.keys()))))
             if nextkey is not None and nextkey not in self._ranks:
                 raise FatalError("Invalid clan rank: {} (available ranks: {})"
                                  .format(nextkey, 
-                                         ", ".join(self._ranks.keys())))
+                                         ", ".join(list(self._ranks.keys()))))
 
             try:                
                 self._promotionRules[self._ranks[key]['rankId']] = (
@@ -255,7 +255,7 @@ class ClanRankModule(BaseModule):
         
         curTime = int(time.time())
         newUserDb = copy.deepcopy(self._userDb)
-        for record in newUserDb.values():
+        for record in list(newUserDb.values()):
             record['updated'] = False
 
         # member info comes from two sources: members in the clan right
@@ -301,7 +301,7 @@ class ClanRankModule(BaseModule):
         
         newMembers = []
         # add some default values and put these in the database
-        for uid, record in members.items():
+        for uid, record in list(members.items()):
             record.setdefault('karma', 0)
             record.setdefault('inClan', False)
             record.setdefault('whitelist', False)
@@ -317,11 +317,11 @@ class ClanRankModule(BaseModule):
                 
         # delete old users from database
         deleteAfterSeconds = _daysToSecs(90)
-        newUserDb = {k: v for k,v in newUserDb.items()
+        newUserDb = {k: v for k,v in list(newUserDb.items())
                         if v.get('lastData') >= curTime - deleteAfterSeconds}
         
         # remove deleted users from _inactiveAstrals
-        for k in self._inactiveAstrals.keys():
+        for k in list(self._inactiveAstrals.keys()):
             if k not in newUserDb:
                 del self._inactiveAstrals[k]
             
@@ -330,7 +330,7 @@ class ClanRankModule(BaseModule):
                                record['userName'],
                                record['userId'],
                                "" if record['inClan'] else " [whitelist only]")
-                             for key,record in newUserDb.items()
+                             for key,record in list(newUserDb.items())
                              if key in newMembers]    
             txt = ("The following users are new clan members:\n\n{}\n"
                    .format("\n".join(newMemberList)))
@@ -346,7 +346,7 @@ class ClanRankModule(BaseModule):
     def _doPromotionDemotion(self, simulate):
         self.log("Running rankings...")
         self._refreshClanMembers()
-        for record in self._userDb.values():
+        for record in list(self._userDb.values()):
             if self._stopNow.is_set():
                 return
             if not record.get('updated', False):
@@ -394,7 +394,7 @@ class ClanRankModule(BaseModule):
         else:
             # ranks are singly-linked, so let's find the rank that links
             # to this one
-            rankMatch = [rankId for rankId,rule in self._promotionRules.items()
+            rankMatch = [rankId for rankId,rule in list(self._promotionRules.items())
                          if rule['nextRankId'] == currentRank['rankId']]
             if not rankMatch:
                 self._log.warning("Could not demote user {}: no rank "
@@ -509,7 +509,7 @@ class ClanRankModule(BaseModule):
         curTime = time.time()
         numRecords = len(self._userDb)
         i = 0
-        for uid_s, record in self._userDb.items():
+        for uid_s, record in list(self._userDb.items()):
             i += 1
             if self._stopNow.is_set():
                 break
@@ -532,7 +532,7 @@ class ClanRankModule(BaseModule):
             bootedList = ["{} (#{}) [{}]".format(record['userName'],
                                                  record['userId'],
                                                  record['rank']['rankName'])
-                          for key,record in self._userDb.items()
+                          for key,record in list(self._userDb.items())
                           if key in bootedMembers]    
             txt = ("The following users have been booted and/or "
                    "removed from the clan whitelist:\n\n{}\n"
@@ -546,7 +546,7 @@ class ClanRankModule(BaseModule):
     # profile page. If they're not an astral spirit, remove them from the list
     def _updateInactiveAstrals(self):
         self.log("Checking inactive astral spirits...")
-        for s_uid in self._inactiveAstrals.keys():
+        for s_uid in list(self._inactiveAstrals.keys()):
             if self._stopNow.is_set():
                 return
             uid = int(s_uid)
@@ -753,7 +753,7 @@ class ClanRankModule(BaseModule):
     def _raiseDaysInClan(self):
         self._refreshClanMembers()
         curTime = time.time()
-        for record in self._userDb.values():
+        for record in list(self._userDb.values()):
             timeSinceEntryCreated = curTime - record['entryCreated']
 
             rankId = record['rank']['rankId']

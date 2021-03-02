@@ -134,7 +134,7 @@ class TownStageModule(BaseDungeonModule):
             return None
         doneAmt = 0
         if len([item for item in self._moshes if item is None]) == 0:
-            for i,d in zip(range(1,7), self._moshes):
+            for i,d in zip(list(range(1,7)), self._moshes):
                 doneAmt += d*getMoshDamage(i)
         return doneAmt
 

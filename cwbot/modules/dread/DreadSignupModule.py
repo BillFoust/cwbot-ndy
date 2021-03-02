@@ -79,7 +79,7 @@ class DreadSignupModule(BaseChatModule):
     def sendSignup(self, boss):
         if boss == None:
             msg = ""
-            for boss in self._signupList.keys():
+            for boss in list(self._signupList.keys()):
                 msg += "{}\n".format(self.printBossList(boss))
         else:
             msg = self.printBossList(boss)

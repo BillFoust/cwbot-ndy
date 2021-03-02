@@ -1,5 +1,5 @@
 import kol.Error as Error
-from GenericRequest import GenericRequest
+from .GenericRequest import GenericRequest
 from kol.database import ItemDatabase
 from kol.manager import PatternManager
 from kol.util import StringUtils

@@ -23,7 +23,7 @@ class ManagerMetaClass(abc.ABCMeta):
         
         
 class BaseManager(EventSubsystem.EventCapable,
-                  HeartbeatSubsystem.HeartbeatCapable):
+                  HeartbeatSubsystem.HeartbeatCapable, metaclass=ManagerMetaClass):
     """
     Base class for all manager objects. Every subclass MUST impliment a
     capabilities attribute that is a list of strings.
@@ -51,8 +51,6 @@ class BaseManager(EventSubsystem.EventCapable,
     modules by periodically calling _syncState(), which utilizes the sqlite3
     database. 
     """
-    
-    __metaclass__ = ManagerMetaClass
     capabilities = ['inventory', 'chat']
     
     __clanMembers = set([])
@@ -119,7 +117,7 @@ class BaseManager(EventSubsystem.EventCapable,
         base = config['base']
         
         # loop through modules
-        for k,v in config.items():
+        for k,v in list(config.items()):
             if isinstance(v, dict):
                 cfg = v
                 perm = toTypeOrNone(v['permission'], str)
@@ -257,7 +255,7 @@ class BaseManager(EventSubsystem.EventCapable,
                 try:
                     self._db.updateStateTable(self.identity, self._persist)
                 except Exception as e:
-                    for k,v in self._persist.items():
+                    for k,v in list(self._persist.items()):
                         try:
                             encode([k,v]) # check if JSON error
                         except:

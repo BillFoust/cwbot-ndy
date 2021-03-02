@@ -48,9 +48,9 @@ class AnnouncementModule(BaseModule):
         
         
     def _configure(self, config):
-        for k,v in config.items():
+        for k,v in list(config.items()):
             if isinstance(v, dict):
-                self._messages[k] = dict(v.items())
+                self._messages[k] = dict(list(v.items()))
 
 
     def _eventCallback(self, eData):
@@ -58,7 +58,7 @@ class AnnouncementModule(BaseModule):
             return
         if eData.fromIdentity == "__system__":
             args = eData.data.get('args', "")
-            for channel,msgDict in self._messages.items():
+            for channel,msgDict in list(self._messages.items()):
                 txt = msgDict.get(eData.subject, "")
                 if txt != "":
                     txt = txt.replace("%arg%", args)

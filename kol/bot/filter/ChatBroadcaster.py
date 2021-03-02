@@ -72,7 +72,7 @@ def handleClanChat(context, **kwargs):
                 if bot.session != None and bot.session.isConnected and hasattr(bot.session, "chatManager"):
                     try:
                         bot.sendChatMessage(msg)
-                    except AttributeError, inst:
+                    except AttributeError as inst:
                         Report.error("chat", "Could not broadcast message.", inst)
 
     return FilterManager.CONTINUE

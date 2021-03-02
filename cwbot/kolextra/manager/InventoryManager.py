@@ -71,7 +71,7 @@ class InventoryManager(object):
         
     def releaseItems(self, iidQtyDict, reserveName, reserveInfo):
         """ Release multiple items (i.e., negative numbers of items). """
-        self.reserveItems(dict((iid, -qty) for iid,qty in iidQtyDict.items()),
+        self.reserveItems(dict((iid, -qty) for iid,qty in list(iidQtyDict.items())),
                           reserveName, reserveInfo)
             
     def reserveItems(self, iidQtyDict, reserveName, reserveInfo):
@@ -138,7 +138,7 @@ class InventoryManager(object):
         reserveInfo. That is, if the same item is reserved twice, the total
         quantity will only be combined if reserveName and reserveInfo match.
         Otherwise, a new row will be added to the database. """
-        for iid,qty in iidQtyDict.items():
+        for iid,qty in list(iidQtyDict.items()):
             cursor.execute("UPDATE {} SET reserved = reserved + ? "
                            "WHERE iid=? AND reservedBy=? AND reserveInfo=?"
                            .format(self._name), (qty,iid,reserveName, 

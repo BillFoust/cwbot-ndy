@@ -23,7 +23,7 @@ from pygments.formatters import HtmlFormatter #@UnresolvedImport
  
 def stacktraces():
     code = []
-    for threadId, stack in sys._current_frames().items():
+    for threadId, stack in list(sys._current_frames().items()):
         threads = threading.enumerate()
         threadMatches = [t.name for t in threads if t.ident == threadId]
         tname = threadMatches[0] if threadMatches else "(unknown thread)"

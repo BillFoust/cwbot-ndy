@@ -106,7 +106,7 @@ Show the message for the next [[9999]] days (counting today)
     def initialize(self, lastKnownState, initData): 
         super(PeriodicAnnouncementModule, self).initialize(lastKnownState, 
                                                            initData) 
-        for k,v in lastKnownState['messages'].items(): 
+        for k,v in list(lastKnownState['messages'].items()): 
             if v['order'] is None:
                 v['order'] = []
             if k in self._messages and v['hard']: 
@@ -117,7 +117,7 @@ Show the message for the next [[9999]] days (counting today)
                 else: 
                     order = v['order']
                     if order:
-                        for k2 in messageEntry['messages'].keys(): 
+                        for k2 in list(messageEntry['messages'].keys()): 
                             if k2 not in order: 
                                 order.append(k2) 
                     messageEntry.update(
@@ -130,7 +130,7 @@ Show the message for the next [[9999]] days (counting today)
         
         
     def _configure(self, config): 
-        for k,v in config.items(): 
+        for k,v in list(config.items()): 
             if isinstance(v, dict): 
                 modeStr = v.setdefault('mode', 'cycle').lower() 
                 periodStr = v.setdefault('period', 1440) 
@@ -161,7 +161,7 @@ Show the message for the next [[9999]] days (counting today)
                 channels = stringToList(v.setdefault('channel', 'clan,')) 
                                 
                 messages = {} 
-                for key_,val_ in v.items(): 
+                for key_,val_ in list(v.items()): 
                     if key_.lower().startswith("message"): 
                         try: 
                             keyVal = "message{:06d}".format(int(key_[7:])) 
@@ -218,7 +218,7 @@ Show the message for the next [[9999]] days (counting today)
     
     def _getAnnouncementsKmail(self, uid):
         messageStrs = []
-        for k,v in self._messages.items():
+        for k,v in list(self._messages.items()):
             if not v['hard']:
                 secondsLeft = v['expires'] - self._rolloverTime
                 daysLeft = int(math.floor(secondsLeft / (24 * 60 * 60)))
@@ -251,7 +251,7 @@ Show the message for the next [[9999]] days (counting today)
         
     def _doAnnouncements(self, firstTime):
         curTime = _epochTime()
-        for k,v in self._messages.items():
+        for k,v in list(self._messages.items()):
             if not v['order']:
                 continue
             period = max(v['period'] * 60, 60)
@@ -286,7 +286,7 @@ Show the message for the next [[9999]] days (counting today)
                 
                 
     def _checkOrdering(self):
-        for k,v in self._messages.items():
+        for k,v in list(self._messages.items()):
             if v['index'] >= len(v['order']):
                 v['index'] = 0
                 
@@ -294,12 +294,12 @@ Show the message for the next [[9999]] days (counting today)
                 if mode == 0:
                     v['order'] = sorted(v['messages'].keys())
                 elif mode == 1:
-                    newList = v['messages'].keys()
+                    newList = list(v['messages'].keys())
                     random.shuffle(newList)
                     v['order'] = newList
                 else:
                     idx = random.randint(0, len(v['messages']))
-                    v['order'] = [v['messages'].keys()[idx]]
+                    v['order'] = [list(v['messages'].keys())[idx]]
                 self.log("Order for {} is {}".format(k, v['order']))
 
 
@@ -343,7 +343,7 @@ Show the message for the next [[9999]] days (counting today)
             
     def _deleteExpired(self):
         keepMe = lambda t: t == 0 or t > self._rolloverTime
-        self._messages = {k: v for k,v in self._messages.items()
+        self._messages = {k: v for k,v in list(self._messages.items())
                           if keepMe(v.setdefault('expires', 0))} 
             
             

@@ -20,7 +20,7 @@ class Kmail(object):
     def __repr__(self):
         return ("uid={}, meat={}, items={}, text='{}'"
                 .format(self.uid, self.meat, 
-                        dict(self.items.items()), self.text.encode('utf-8')))
+                        dict(list(self.items.items())), self.text.encode('utf-8')))
     
     
     @classmethod
@@ -40,7 +40,7 @@ class Kmail(object):
         m = self.info
         m.update({'userId': self.uid, 'text': self.text, 'meat': self.meat, 
                   'items': [{'id': id_, 'quantity': qty} 
-                            for id_,qty in self.items.items()]})
+                            for id_,qty in list(self.items.items())]})
         return m
     
         
@@ -53,7 +53,7 @@ class Kmail(object):
     def addItems(self, itemIdQtyDict):
         """ Add multiple items to the kmail, using a dict of 
         (item-id, quantity) pairs """
-        for k,v in itemIdQtyDict.items():
+        for k,v in list(itemIdQtyDict.items()):
             self.addItem(k,v)
         return self
     

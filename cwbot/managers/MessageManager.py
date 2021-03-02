@@ -67,8 +67,7 @@ class MessageManager(BaseManager):
                     try:
                         # add list of responses if a list was returned
                         responses.extend(
-                            map(lambda m: KmailResponse(self, mod, m), 
-                                sendMessage))
+                            [KmailResponse(self, mod, m) for m in sendMessage])
                     except TypeError:
                         # looks like it was just a single message
                         responses.append(KmailResponse(self, mod, sendMessage))

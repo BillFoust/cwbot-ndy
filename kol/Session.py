@@ -6,10 +6,10 @@ from kol.request.CharpaneRequest import CharpaneRequest
 
 
 
-import cookielib
+import http.cookiejar
 import hashlib
 import requests # requests library is required
-from Opener import RequestsOpener as Opener
+from .Opener import RequestsOpener as Opener
 
 
 class Session(object):

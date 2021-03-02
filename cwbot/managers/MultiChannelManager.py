@@ -1,5 +1,5 @@
 import re
-from BaseChatManager import BaseChatManager
+from .BaseChatManager import BaseChatManager
 
 
 
@@ -27,9 +27,9 @@ class MultiChannelManager(BaseChatManager):
         """ Additional configuration for SingleChannelManager """
         super(MultiChannelManager, self)._configure(config)
         channelList = config.setdefault('channel', "UNKNOWN")
-        self._channelName = map(str.strip,  
-                                map(str.lower, 
-                                    re.split(r'\s*,\s*', channelList)))
+        self._channelName = list(map(str.strip,  
+                                list(map(str.lower, 
+                                    re.split(r'\s*,\s*', channelList)))))
         if not self._channelName or self._channelName == ["unknown"]:
             raise ValueError("Channel not set for {}".format(self.identity))
         self._log.debug("Set channels to {}"

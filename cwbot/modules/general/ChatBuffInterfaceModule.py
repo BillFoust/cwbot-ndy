@@ -15,14 +15,14 @@ class ChatBuffInterfaceModule(BaseChatModule):
         self._buffer = toTypeOrNone(config.setdefault('buff_module', 'none'))
         buffList = config.setdefault('buffs', {})
         self._buffs = dict((k.strip().lower(), v.strip())
-                           for k,v in buffList.items())
+                           for k,v in list(buffList.items()))
         
     
     def _processCommand(self, msg, cmd, args):
         if cmd == "buff":
             if args.strip() == "":
                 buffList = []
-                for k,v in self._buffs.items():
+                for k,v in list(self._buffs.items()):
                     result = self._raiseEvent('buff_info', self._buffer,
                                               {'userId': msg['userId'],
                                                'name': v})[0].data

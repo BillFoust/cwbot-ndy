@@ -2,8 +2,8 @@ import cwbot.util.DebugThreading as threading
 import time
 import re
 import logging
-import urllib2
-import HTMLParser
+import urllib.request, urllib.error, urllib.parse
+import html.parser
 from unidecode import unidecode
 from cwbot import logConfig
 from collections import defaultdict
@@ -36,7 +36,7 @@ def _itemsToDict(itemList, addTo={}):
         
 def _itemsToList(itemDict):
     """ Convert dict of (item-id: quantity) pairs back to pyKol-style list. """
-    return [{'id': iid, 'quantity': qty} for iid,qty in itemDict.items()]
+    return [{'id': iid, 'quantity': qty} for iid,qty in list(itemDict.items())]
     
         
 _deferredText = "Here are your items."
@@ -173,7 +173,7 @@ class MailHandler(ExceptionThread):
     _minKmailLen = 1500 # minimum length if not the last kmail
     _maxTotalKmailLen = _maxKmailLen * 6 - 100
     
-    _htmlParser = HTMLParser.HTMLParser()
+    _htmlParser = html.parser.HTMLParser()
     
     
     def __init__(self, session, props, invMan, db):
@@ -266,7 +266,7 @@ class MailHandler(ExceptionThread):
                 # remove unicode characters
                 if 'text' in message:
                     txt = message['text']
-                    txtUnicode = u''.join(unichr(ord(c)) for c in txt)
+                    txtUnicode = ''.join(chr(ord(c)) for c in txt)
                     txtUnicode = self._htmlParser.unescape(txtUnicode)
                     message['text'] = unidecode(txtUnicode)
 
@@ -449,12 +449,12 @@ class MailHandler(ExceptionThread):
                         
         # split items into multiple kmails
         itemList = [{}]
-        for iid,qty in items.items():
+        for iid,qty in list(items.items()):
             if len(itemList[-1]) < 11:
                 itemList[-1][iid] = qty
             else:
                 itemList.append({iid:qty})
-        mailItemList = map(_itemsToList, itemList)
+        mailItemList = list(map(_itemsToList, itemList))
 
         mails = [{'userId': uid, 'text': txt, 'meat': 0, 'items': []}
                  for txt in kmailTextList]
@@ -605,8 +605,8 @@ class MailHandler(ExceptionThread):
                     meatOwed += message.get('meat', 0)
                 msg = c.fetchone()
             difference = dict((iid, inv.get(iid, 0) - qty)
-                              for iid,qty in itemsOwed.items())
-            deficit = dict((iid, -diff) for iid,diff in difference.items()
+                              for iid,qty in list(itemsOwed.items()))
+            deficit = dict((iid, -diff) for iid,diff in list(difference.items())
                            if diff < 0)
             if deficit:
                 # get items in display case
@@ -615,14 +615,14 @@ class MailHandler(ExceptionThread):
                 display = _itemsToDict(d2['items'])
                 difference = dict(
                     (iid, inv.get(iid, 0) + display.get(iid, 0) - qty)
-                    for iid,qty in itemsOwed.items())
-                deficit = dict((iid, -diff) for iid,diff in difference.items()
+                    for iid,qty in list(itemsOwed.items()))
+                deficit = dict((iid, -diff) for iid,diff in list(difference.items())
                                if diff < 0)
             if deficit or meatOwed > meat:
                 # notify admins of item deficit!
                 warningText = ("Warning: {} has an item deficit of: \n"
                                .format(self._props.userName))
-                for iid, d in deficit.items():
+                for iid, d in list(deficit.items()):
                     warningText += ("\n{}: {}"
                                     .format(
                                         d, getItemFromId(iid).get(
@@ -681,7 +681,7 @@ class MailHandler(ExceptionThread):
                        initialDelay=10, scaleFactor=1)
             self._lastOnlineCheck = now
             return True
-        except (kol.Error.Error, urllib2.HTTPError):
+        except (kol.Error.Error, urllib.error.HTTPError):
             pass
         return False
         
@@ -702,7 +702,7 @@ class MailHandler(ExceptionThread):
             self._invMan.refreshInventory()
             inv = self._invMan.completeInventory()
             items = _itemsToDict(message.get('items', []))
-            for iid,qty in items.items():
+            for iid,qty in list(items.items()):
                 inInventory = inv.get(iid, 0)
                 if inInventory < qty:
                     self._log.info("Short on item {}; taking from DC..."
@@ -715,7 +715,7 @@ class MailHandler(ExceptionThread):
 
             # check for items in stock, and if they are sendable
             filteredItems = {}
-            for iid,qty in items.items():
+            for iid,qty in list(items.items()):
                 inInventory = inv.get(iid, 0)
                 if inInventory < qty:
                     message['out_of_stock'] = True
@@ -1095,7 +1095,7 @@ class MailHandler(ExceptionThread):
             r = GetDisplayCaseRequest(self._s)
             d = tryRequest(r)
             inv = _itemsToDict(d['items'], inv)
-            for iid,qty in items.items():
+            for iid,qty in list(items.items()):
                 if inv.get(iid, 0) < qty:
                     raise MessageError("Not enough of item {} in inventory."
                                        .format(iid)) 

@@ -7,7 +7,7 @@ from kol.data import Items
 from kol.manager import FilterManager
 from kol.util import Report
 
-import cPickle as pickle
+import pickle as pickle
 import os
 import datetime
 import copy
@@ -132,9 +132,9 @@ def loadItemsFromFile():
             print("Item cache expired.")
             __discoveryDate = datetime.datetime.now()
         f.close()
-        print("Loaded %d items from file." % len(__itemsById))
+        print(("Loaded %d items from file." % len(__itemsById)))
     except:
-        print("Error opening %s for loading" % (discoveryFile))
+        print(("Error opening %s for loading" % (discoveryFile)))
         __discoveryDate = datetime.datetime.now()
     
 def saveItemsToFile():
@@ -145,10 +145,10 @@ def saveItemsToFile():
         pickle.dump(__itemsByDescId, f)
         pickle.dump(__itemsByName, f)
         f.close()
-        print("Wrote %d items to file." % len(__itemsById))
+        print(("Wrote %d items to file." % len(__itemsById)))
     except:
         try:
-            print("Error opening %s for writing" % (discoveryFile))            
+            print(("Error opening %s for writing" % (discoveryFile)))            
             os.remove(discoveryFile)
         except:
             pass

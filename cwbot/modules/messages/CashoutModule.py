@@ -30,7 +30,7 @@ class CashoutModule(BaseKmailModule):
                 return self.newMessage(message.uid, "I don't have any items "
                                                     "stored for you.")
             text = "Your balance: \n"
-            for iid, qty in items.items():
+            for iid, qty in list(items.items()):
                 text += ("\n{}: {}".format(qty, getItemFromId(iid).get(
                                           'name', "item ID {}".format(iid))))
             if meat > 0:

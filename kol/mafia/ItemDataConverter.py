@@ -3,7 +3,7 @@ from kol.database import ItemDatabase
 from kol.serialize import ItemsSerializer
 
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 CONCOCTIONS_FILE = "https://kolmafia.svn.sourceforge.net/svnroot/kolmafia/src/data/concoctions.txt"
 EQUIPMENT_FILE = "https://kolmafia.svn.sourceforge.net/svnroot/kolmafia/src/data/equipment.txt"
@@ -76,7 +76,7 @@ GIFT_PACKAGES = [
 _items = []
 _itemsById = {}
 _itemsByName = {}
-_opener = urllib2.build_opener()
+_opener = urllib.request.build_opener()
 
 
 def main():
@@ -294,8 +294,8 @@ def readInebrietyFile():
                 myst = parts[6]
                 mox = parts[7]
                 if name == "ice-cold Sir Schlitz":
-                    print quality
-                    print drunkenness
+                    print(quality)
+                    print(drunkenness)
 
                 try:
                     item = itemByName(name)
@@ -529,7 +529,7 @@ def fixupItems():
                     del enchantments["HP Regen Min"]
                     del enchantments["HP Regen Max"]
                     enchantments["hpRegen"] = "%s-%s" % (min, max)
-                for k,v in ENCHANTMENT_MAPPINGS.iteritems():
+                for k,v in list(ENCHANTMENT_MAPPINGS.items()):
                     if k in enchantments:
                         enchantments[v] = enchantments[k]
                         del enchantments[k]

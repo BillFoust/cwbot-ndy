@@ -51,7 +51,7 @@ class Database(object):
             c.execute("VACUUM")
             c.execute("PRAGMA integrity_check")
             result = c.fetchall()
-            if result != [(u'ok',)]:
+            if result != [('ok',)]:
                 raise Exception("Database corrupted. First error = {}"
                                 .format(result[0][0]))
         finally:
@@ -91,7 +91,7 @@ class Database(object):
         tableName = self._names['state']
         con = None
         items = []
-        for modName,sDict in stateDict.items():
+        for modName,sDict in list(stateDict.items()):
             items.append((encode(sDict), managerName, modName))
         try:
             con = sql.connect(self._filename, timeout=10, 

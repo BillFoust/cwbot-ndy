@@ -1,5 +1,5 @@
-import BotManager
-import BotUtils
+from . import BotManager
+from . import BotUtils
 import kol.Error as Error
 from kol.Session import Session
 from kol.database import ItemDatabase
@@ -13,13 +13,13 @@ from kol.request.SendMessageRequest import SendMessageRequest
 from kol.util import DataUtils
 from kol.util import Report
 
-import httplib
+import http.client
 import os
 import pickle
 import socket
 import threading
 import time
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 COMMANDS_COMMANDS = ["command", "commands"]
 HELP_COMMANDS = ["help"]
@@ -150,7 +150,7 @@ class Bot(threading.Thread):
                         # successfully. Reset our current state.
                         self.clearState("cycle")
 
-                except Error.Error, inst:
+                except Error.Error as inst:
                     msg = inst.msg
                     level = Report.WARNING
                     if inst.code == Error.NIGHTLY_MAINTENANCE:
@@ -172,19 +172,19 @@ class Bot(threading.Thread):
                     Report.report("bot", level, msg, inst)
                     if level == Report.FATAL:
                         self.prepareShutdown()
-                except urllib2.URLError, inst:
+                except urllib.error.URLError as inst:
                     Report.error("bot", "URLError! Let's try logging in again and maybe get a new server in the process.", inst)
                     self.session = None
                     timeToSleep = 120
-                except httplib.BadStatusLine, inst:
+                except http.client.BadStatusLine as inst:
                     Report.error("bot", "Bad HTTP Status! Let's try logging in again and maybe get a new server in the process.", inst)
                     self.session = None
                     timeToSleep = 120
-                except socket.error, inst:
+                except socket.error as inst:
                     Report.error("bot", "Socket error! Let's try logging in again and maybe get a new server in the process.", inst)
                     self.session = None
                     timeToSleep = 120
-                except Exception, inst:
+                except Exception as inst:
                     Report.error("bot", "Unknown error.", inst)
                     cxt = {}
                     self.executeFilter("botUnknownException", cxt, inst=inst)
@@ -338,7 +338,7 @@ class Bot(threading.Thread):
                         self.returnKmail(m, self.params["didNotUnderstandKmailResponse"])
                         handledKmail = True
 
-                except Error.Error, inst:
+                except Error.Error as inst:
                     if inst.code == Error.BOT_REQUEST:
                         Report.info("bot", "Invalid kmail request.", inst)
                         self.returnKmail(m, inst.msg)
@@ -401,7 +401,7 @@ class Bot(threading.Thread):
                             self.sendKmail(resp)
                             handledChat = True
 
-                except Error.Error, inst:
+                except Error.Error as inst:
                     if inst.code == Error.BOT_REQUEST:
                         Report.info("bot", "Invalid chat request.", inst)
                         self.sendChatMessage(inst.msg)
@@ -513,7 +513,7 @@ class Bot(threading.Thread):
                 r.doRequest()
                 Report.info("bot", "Message sent.")
                 state["sentMessage"] = 1
-            except Error.Error, inst:
+            except Error.Error as inst:
                 if inst.code == Error.USER_IN_HARDCORE_RONIN:
                     Report.info("bot", "User could not receive items/meat.", inst)
                     state["userInHardcoreOrRonin"] = 1

@@ -1,5 +1,5 @@
 import re
-from BaseManager import BaseManager
+from .BaseManager import BaseManager
 from cwbot.util.textProcessing import stringToBool
 
 class BaseChatManager(BaseManager):
@@ -162,7 +162,7 @@ class BaseChatManager(BaseManager):
             newCmds = mod.extendedCall('available_commands')
             if newCmds is not None:
                 # remove commands with no description (alternates / hidden)
-                newCmds = dict((k.lower(),v) for k,v in newCmds.items() 
+                newCmds = dict((k.lower(),v) for k,v in list(newCmds.items()) 
                                if v is not None)
                 if generalHelp or cmd in newCmds:
                     if not clanOnly or self.checkClan(uid):

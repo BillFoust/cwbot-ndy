@@ -73,7 +73,7 @@ class _DebugThread(threading.Thread):
                 
             if self._waiting:
                 now = _time.time()
-                maxWait = max((now - then) for then in self._waiting.values())
+                maxWait = max((now - then) for then in list(self._waiting.values()))
                 if maxWait < _waitTime and self._deadlocked:
                     # deadlock resolved
                     self._deadlocked = False
@@ -179,6 +179,6 @@ def __DeadlockTest_Do_Not_Use():
     t1.join(); t2.join()
     
 if __name__ == "__main__":
-    print("Testing deadlocking. Please wait {} seconds.".format(_waitTime))
+    print(("Testing deadlocking. Please wait {} seconds.".format(_waitTime)))
     __DeadlockTest_Do_Not_Use()
     

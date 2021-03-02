@@ -1,7 +1,7 @@
 from kol.relay.RelayRequestHandler import RelayRequestHandler
 from kol.util import Report
 
-from BaseHTTPServer import HTTPServer
+from http.server import HTTPServer
 import os
 import socket
 import threading
@@ -34,7 +34,7 @@ class RelayServer(threading.Thread):
             try:
                 server = HTTPServer(('', self.port), RelayRequestHandler)
                 started = True
-            except socket.error, inst:
+            except socket.error as inst:
                 numTries += 1
                 if numTries == 10:
                     raise inst

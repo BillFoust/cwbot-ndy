@@ -84,7 +84,7 @@ class DreadUniquesModule(BaseDungeonModule):
                 # count up which users got this log message
                 c1 = Counter(self._claimed.get(itemTxt, []))
                 c2 = Counter(newClaimed.get(itemTxt, []))
-                for k,v in c2.items():
+                for k,v in list(c2.items()):
                     # iterate through each user
                     numCollected = v - c1[k]
                     # print a pickup message for each time user X got item
@@ -137,7 +137,7 @@ class DreadUniquesModule(BaseDungeonModule):
                                                                 'uncommon']):
                 areaItems[record['category']].append(
                                                 (record, available,locked))
-            for k,v in areaItems.items():
+            for k,v in list(areaItems.items()):
                 itemTxt = []
                 for record,available,locked in v:
                     quantity = toTypeOrNone(record['quantity'], int)
@@ -153,7 +153,7 @@ class DreadUniquesModule(BaseDungeonModule):
                 messages[k] = "({}) {}".format(k[4:], ", ".join(itemTxt))
                     
             # get list of areas by index
-            areas = dict((v['index'], k) for k,v in self._dread.items())
+            areas = dict((v['index'], k) for k,v in list(self._dread.items()))
             txtSegments = []
             for idx in sorted(areas.keys()):
                 areaname = areas[idx]

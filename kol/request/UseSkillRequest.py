@@ -1,4 +1,4 @@
-from GenericRequest import GenericRequest
+from .GenericRequest import GenericRequest
 from kol.database import SkillDatabase
 from kol.manager import PatternManager
 

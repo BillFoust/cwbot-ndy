@@ -77,7 +77,7 @@ class BuffbotModule(BaseKmailModule):
                                                 'casts': 1,
                                                 'daily_limit': 2,
                                                 'outfit': 'none'}})
-        for k,v in buffs.items():
+        for k,v in list(buffs.items()):
             _integerize(v, 'id', "UNKNOWN", k)
             _integerize(v, 'cost', "UNKNOWN", k)
             _integerize(v, 'casts', "UNKNOWN", k)
@@ -93,7 +93,7 @@ class BuffbotModule(BaseKmailModule):
             except kol.Error.Error:
                 _integerize(v, 'mp_cost', "UNKNOWN", k)
             self._buffs[k] = v
-        priceList = [v['cost'] for v in self._buffs.values()
+        priceList = [v['cost'] for v in list(self._buffs.values())
                      if v['cost'] > 0]
         if len(priceList) != len(set(priceList)):
             raise FatalError("Duplicate buff prices for module {}"
@@ -104,14 +104,14 @@ class BuffbotModule(BaseKmailModule):
         self._date = getUniqueDateString(self.session)
         self._used = {}
         if state['date'] == self._date:
-            self._used = dict((int(k), v) for k,v in state['used'].items())
+            self._used = dict((int(k), v) for k,v in list(state['used'].items()))
             
             
     def _sendBuffKmail(self, message):
         txt = "The following buffs are available:\n"
-        spellList = set(v['id'] for v in self._buffs.values())
+        spellList = set(v['id'] for v in list(self._buffs.values()))
         for sid in spellList:
-            matches = [(k,v) for k,v in self._buffs.items()
+            matches = [(k,v) for k,v in list(self._buffs.items())
                        if v['id'] == sid and v['cost'] > 0]
             matches.sort(key=lambda x: x[1]['cost'])
             for k,v in matches:
@@ -208,7 +208,7 @@ class BuffbotModule(BaseKmailModule):
             return None
         if text.strip() != "":
             return None
-        buffName = next((k for k,v in self._buffs.items() 
+        buffName = next((k for k,v in list(self._buffs.items()) 
                         if v['cost'] == meat), None)
         if buffName is None:
             return None

@@ -18,7 +18,7 @@ class TakeItemsFromDisplayCaseRequest(GenericRequest):
             ctr += 1
             self.requestData["whichitem%s" % ctr] = item["id"]
             self.requestData["howmany%s" % ctr] = item["quantity"]
-        print("Request: " + str(self.requestData))
+        print(("Request: " + str(self.requestData)))
 
     def doRequest(self):
         with self.__lock:

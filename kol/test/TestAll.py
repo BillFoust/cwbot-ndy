@@ -1,9 +1,9 @@
-import TestData
-import TestGetItemDescriptionRequest
-import TestItemDatabase
-import TestBountyHunter
-import TestLogin
-import TestLogout
+from . import TestData
+from . import TestGetItemDescriptionRequest
+from . import TestItemDatabase
+from . import TestBountyHunter
+from . import TestLogin
+from . import TestLogout
 from kol.util import Report
 
 import sys

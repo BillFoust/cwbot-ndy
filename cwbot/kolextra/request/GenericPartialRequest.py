@@ -2,8 +2,8 @@ import kol.Error as Error
 from kol.util import Report
 import requests
 
-import urllib
-from cStringIO import StringIO
+import urllib.request, urllib.parse, urllib.error
+from io import StringIO
 
 class GenericPartialRequest(object):
     """A generic request to a Kingdom of Loathing server. This request is 

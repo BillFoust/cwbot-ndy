@@ -31,4 +31,4 @@ class ExceptionThread(threading.Thread):
         if self._exc is not None:
             e = self._exc
             self._exc = None
-            raise e[1], None, e[2]
+            raise e[1].with_traceback(e[2])

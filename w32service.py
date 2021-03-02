@@ -8,6 +8,7 @@ import os, sys, string, time
 import re
 import multiprocessing
 import cwbot.main
+import importlib
 
 
 class CwbotService(win32serviceutil.ServiceFramework):
@@ -91,7 +92,7 @@ class CwbotService(win32serviceutil.ServiceFramework):
             else:
                 servicemanager.LogInfoMsg("No stop signal.")
                 if self._proc is None:
-                    reload(cwbot.main)
+                    importlib.reload(cwbot.main)
                     servicemanager.LogInfoMsg("Creating child process...")
                     self._connection, c = multiprocessing.Pipe()
                     self._proc = multiprocessing.Process(

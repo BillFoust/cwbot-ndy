@@ -1,7 +1,7 @@
 import kol.Error as Error
 from kol.util import Report
 from kol.manager import PatternManager
-from GenericRequest import GenericRequest
+from .GenericRequest import GenericRequest
 
 import time
 

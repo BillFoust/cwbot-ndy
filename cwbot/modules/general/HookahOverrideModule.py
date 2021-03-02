@@ -35,7 +35,7 @@ class HookahOverrideModule(BaseHookahModule, BaseChatModule):
         with InventoryLock.lock:
             oos = self.outOfStock(self._saveLast)
             if len(oos) > 0:
-                print(str(oos))
+                print((str(oos)))
                 return "Not enough hookah parts."
             self.removeHookahFromDisplay(0)
             hookahItems = [4510,4511,4515,4516,4512,4513]

@@ -72,10 +72,10 @@ class ChatLogModule(BaseChatModule):
 
 
     def _configure(self, config):
-        self._clanOnly = map(
+        self._clanOnly = list(map(
                 str.lower, stringToList(config.get('clan_only_channels', 
                                                    "clan,hobopolis,"
-                                                   "slimetube,dread")))
+                                                   "slimetube,dread"))))
         self.log("Chat log clan only channels: {}"
                  .format(', '.join(self._clanOnly)))
         config['clan_only_channels'] = listToString(self._clanOnly)
@@ -98,7 +98,7 @@ class ChatLogModule(BaseChatModule):
                 
             # delete old lines and place back in log
             self._chatlog = []
-            for slog in sublogs.values():
+            for slog in list(sublogs.values()):
                 self._chatlog.extend(slog[-maxlines:])
                 
             # sort log

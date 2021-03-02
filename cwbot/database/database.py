@@ -18,7 +18,7 @@ def csvDatabase(dbFileName, folder="cwbot/database/data"):
         if dbFileName not in __csvDatabases:
             loader = csv.DictReader(open(os.path.join(folder, dbFileName)))
             __csvDatabases[dbFileName] = [record for record in loader
-                                          if any(True for v in record.values() 
+                                          if any(True for v in list(record.values()) 
                                                  if v != "")]
         return __csvDatabases[dbFileName]
     

@@ -1,4 +1,4 @@
-from ApiRequest import ApiRequest
+from .ApiRequest import ApiRequest
 from kol.database import ItemDatabase
 
 class ItemInformationRequest(ApiRequest):

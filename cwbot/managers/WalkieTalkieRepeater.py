@@ -82,7 +82,7 @@ class WalkieTalkieRepeater(BaseChatManager):
         BaseChatManager._configure(self, config)
         try:
             otherBots = stringToList(config.setdefault('other_bots', "none"))
-            self._otherBots = map(int, otherBots)
+            self._otherBots = list(map(int, otherBots))
         except ValueError:
             raise FatalError("Error configuring WalkieTalkieRepeater: "
                              "other_bots must be list of integers (userIds)")
@@ -215,7 +215,7 @@ class WalkieTalkieRepeater(BaseChatManager):
         uid = msg['userId']
         admin = self.properties.getAdmins('admin_command')
         self._changeFreqRequests[uid] = time.time()
-        numRequests = len([v for v in self._changeFreqRequests.values()
+        numRequests = len([v for v in list(self._changeFreqRequests.values())
                           if v >= time.time() - self._freqChangeTimeout * 60])
         
         if numRequests >= self._numPlayersForFreqChange or uid in admin:

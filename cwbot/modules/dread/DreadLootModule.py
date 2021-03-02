@@ -63,7 +63,7 @@ class DreadLootModule(BaseDungeonModule):
                 kills = self._userKills.get(user)
                 bosses = self._userBosses.get(user)
                 total = kills + bosses
-                for k in ul["hardMode"].values():
+                for k in list(ul["hardMode"].values()):
                     if k == user:
                         total += 50
                 if total == 0:

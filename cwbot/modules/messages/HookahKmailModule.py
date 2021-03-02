@@ -23,12 +23,12 @@ def hookahItems():
 
     
 def hookahItemDict():
-    return dict([(h,1) for h in hookahItems().keys()])
+    return dict([(h,1) for h in list(hookahItems().keys())])
 
 
 def hookahItemCount(items):
     count = 0
-    for i,q in items.items():
+    for i,q in list(items.items()):
         if i in hookahItems():
             count += q
     return count
@@ -37,8 +37,8 @@ def hookahItemCount(items):
 def splitItems(items):
     hItems = dict()
     oItems = dict()
-    for i,q in items.items():
-        if i in hookahItems().keys():
+    for i,q in list(items.items()):
+        if i in list(hookahItems().keys()):
             hItems[i] = q
         else:
             oItems[i] = q
@@ -63,7 +63,7 @@ class BaseHookahModule(BaseModule):
         with InventoryLock.lock:
             r = GetDisplayCaseRequest(self.session)
             inventory = self.tryRequest(r).get('items', [])     
-            for iid, iname in hookahItems().items():
+            for iid, iname in list(hookahItems().items()):
                 threshold = keepLast
                 if not any(item['id'] == iid and item['quantity'] > threshold 
                            for item in inventory):
@@ -78,7 +78,7 @@ class BaseHookahModule(BaseModule):
             self.inventoryManager.refreshInventory()
             inventory = self.inventoryManager.inventory()
             hList = []
-            for hItem in (item for item in hookahItems().keys() 
+            for hItem in (item for item in list(hookahItems().keys()) 
                           if item in inventory):
                 hList.append({'id': hItem, 'quantity': inventory[hItem]})
             if len(hList) > 0:
@@ -95,7 +95,7 @@ class BaseHookahModule(BaseModule):
             self.inventoryManager.refreshInventory()
             inventory = self.inventoryManager.inventory()
             hList = []
-            for hItem in (item for item in hookahItems().keys() 
+            for hItem in (item for item in list(hookahItems().keys()) 
                           if item in inventory):
                 hList.append({'id': hItem, 
                               'quantity': min(inventory.get(hItem, 0), 
@@ -113,7 +113,7 @@ class BaseHookahModule(BaseModule):
             oos = self.outOfStock(keepLast) 
             if len(oos) == 0:
                 hList = [{'id': iid, 'quantity': 1} 
-                         for iid in hookahItems().keys()]
+                         for iid in list(hookahItems().keys())]
                 r = TakeItemsFromDisplayCaseRequest(self.session, hList)
                 self.tryRequest(r)
             else:

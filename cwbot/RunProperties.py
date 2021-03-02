@@ -1,7 +1,7 @@
 import os
 from configObj.configobj import ConfigObj
 from configObj.validate import Validator
-from StringIO import StringIO
+from io import StringIO
 
 class PropertyError(Exception):
     def __init__(self, args):
@@ -58,7 +58,7 @@ class RunProperties(object):
         """ Get a list of all users with the specified permission (or, if
         the permission is "*", all users with any permission) """
         a = set()
-        for uid,p in self._admins.items():
+        for uid,p in list(self._admins.items()):
             if permissionName == "*" or permissionName.lower() in p:
                 a.add(uid)
         return a
@@ -98,8 +98,8 @@ class RunProperties(object):
         if altLogin is not None:
             self.userName, self.password = altLogin
         self.rolloverWait = c['rollover_wait']
-        print("Loaded logon information {}/{}"
-              .format(self.userName, "*" * len(self.password)))
+        print(("Loaded logon information {}/{}"
+              .format(self.userName, "*" * len(self.password))))
 
         
     def _loadAdmins(self):
@@ -112,13 +112,13 @@ class RunProperties(object):
             raise Exception("Invalid admin configuration.")
 
         self._groups = dict(c['groups'])
-        for g,perms in self._groups.items():
+        for g,perms in list(self._groups.items()):
             if g != "exampleGroup":
-                print("Added group {} = {}".format(g, ','.join(perms)))
+                print(("Added group {} = {}".format(g, ','.join(perms))))
 
         self._admins = {}
         admins = dict(c['admins'])
-        for uid,perms in admins.items():
+        for uid,perms in list(admins.items()):
             permissions = []
             for p in perms:
                 permissions.extend(self._groups.get(p, [p]))
@@ -128,8 +128,8 @@ class RunProperties(object):
                 raise Exception("Administrators must be listed by player "
                                 "ID number.")
             if uid != "0":
-                print("Added administrator {} with permissions {}."
-                      .format(uid, ','.join(permissions)))
+                print(("Added administrator {} with permissions {}."
+                      .format(uid, ','.join(permissions))))
         if len(admins) < 2:
             c.validate(Validator(), copy=True)
 

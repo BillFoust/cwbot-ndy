@@ -74,7 +74,7 @@ class MaintenanceModule(BaseChatModule):
         elif cmd == "bot_status":
             r = StatusRequest(self.session)
             d = self.tryRequest(r)
-            return "\n".join("{}: {}".format(k,v) for k,v in d.items()
+            return "\n".join("{}: {}".format(k,v) for k,v in list(d.items())
                              if k not in ["pwd", "eleronkey"])
         elif cmd == "inclan":
             tf = self.parent.checkClan(int(args))

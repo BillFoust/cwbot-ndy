@@ -51,7 +51,7 @@ class AhbgModule(BaseDungeonModule):
             
     @property
     def state(self):
-        return {'watches': dict((u,w) for u,w in self._watches.items() 
+        return {'watches': dict((u,w) for u,w in list(self._watches.items()) 
                                       if w != 0),
                 'dances': self._dances,
                 'availableDances': self._availableDances,
@@ -123,7 +123,7 @@ class AhbgModule(BaseDungeonModule):
 
     def getDone(self):
         doneAmt = self._killed
-        for _user,dances in self._dances.items():
+        for _user,dances in list(self._dances.items()):
             doneAmt += self.getDanceDamage(dances)
         return round(doneAmt)
     
@@ -174,7 +174,7 @@ class AhbgModule(BaseDungeonModule):
         
         matches = []
         arg = ''.join(args.lower().split()) # remove spaces, do lower case
-        for dancename in (item for item in self._watches.keys()):
+        for dancename in (item for item in list(self._watches.keys())):
             currentName = ''.join(dancename.lower().split())
             if currentName == arg:
                 return dancename

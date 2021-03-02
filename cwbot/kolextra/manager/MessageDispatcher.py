@@ -1,5 +1,5 @@
 import logging
-import Queue
+import queue
 import threading
 from cwbot.util.tryRequest import tryRequest
 from kol.request.SendChatRequest import SendChatRequest
@@ -29,7 +29,7 @@ class MessageThread(threading.Thread):
         self._timeout = timeout
         self._stopEvent = threading.Event()
         self.__lock = threading.RLock()
-        self.__messageQueue = Queue.Queue()
+        self.__messageQueue = queue.Queue()
         self._lastTarget = None
         self.throttleSeconds = 1.75
         uid = "MessageThread-{}".format(targetName)
@@ -65,7 +65,7 @@ class MessageThread(threading.Thread):
             try:
                 (target, newChat) = self.__messageQueue.get(True, inc)
                 return (target, newChat)
-            except Queue.Empty:
+            except queue.Empty:
                 if self._stopEvent.is_set():
                     return (None, None)
         return (None, None)
@@ -141,7 +141,7 @@ class MessageDispatcher(threading.Thread):
     def __init__(self, session):
         """ Initialize the dispatcher """
         self._session = session
-        self._messageQueue = Queue.Queue()
+        self._messageQueue = queue.Queue()
         self._chatThreads = {}
         self._log = logging.getLogger("chat")
         self._stopEvent = threading.Event()
@@ -153,7 +153,7 @@ class MessageDispatcher(threading.Thread):
         before shutdown or the bot will hang. """
         self._log.info("Stopping chat threads...")
         while len(self._chatThreads) > 0:
-            for thr in self._chatThreads.values():
+            for thr in list(self._chatThreads.values()):
                 thr.stop()
             sleep(1)
             self._removeDeadThreads()
@@ -187,7 +187,7 @@ class MessageDispatcher(threading.Thread):
                                     .format(target))
                     self._chatThreads[target] = self._startNewThread(target, 
                                                                      newChat)
-            except Queue.Empty:
+            except queue.Empty:
                 pass
             except Exception:
                 self._log.exception("Error in MessageDispatcher")
@@ -227,7 +227,7 @@ class MessageDispatcher(threading.Thread):
 
                 
     def _removeDeadThreads(self):
-        threadList = self._chatThreads.keys()
+        threadList = list(self._chatThreads.keys())
         for target in threadList:
             if not self._chatThreads[target].is_alive():
                 del self._chatThreads[target]

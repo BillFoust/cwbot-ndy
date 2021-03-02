@@ -1,8 +1,8 @@
 import time
 import cwbot.util.DebugThreading as threading
 import kol.Error
-import urllib2, urllib
-import httplib
+import urllib.request, urllib.error, urllib.parse, urllib.request, urllib.parse, urllib.error
+import http.client
 import logging
 
 
@@ -21,9 +21,9 @@ def tryRequest(requestObj, nothrow=False, numTries=3, initialDelay=1,
         except (KeyboardInterrupt, SystemExit, SyntaxError):
             raise
         except (kol.Error.Error, 
-                urllib2.URLError, 
-                urllib.ContentTooShortError,
-                httplib.BadStatusLine,
+                urllib.error.URLError, 
+                urllib.error.ContentTooShortError,
+                http.client.BadStatusLine,
                 Exception) as e:
             if i != numTries - 1:
                 time.sleep(initialDelay * scaleFactor ** i)

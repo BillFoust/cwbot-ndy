@@ -520,9 +520,9 @@ class HealingModule(BaseModule):
         extMp = toTypeOrNone(self._hp['external_mp_healer'], str)
         if extMp is not None:
             self._extMp = "__" + extMp.lower() + "__"
-        hpPriorities = dict((int(k), v) for k,v in self._hp.items()
+        hpPriorities = dict((int(k), v) for k,v in list(self._hp.items())
                             if k.isdigit()) 
-        mpPriorities = dict((int(k), v) for k,v in self._mp.items()
+        mpPriorities = dict((int(k), v) for k,v in list(self._mp.items())
                             if k.isdigit()) 
         for p in sorted(hpPriorities.keys()):
             self._hpMethods.append(self._createHealer(hpPriorities[p]))

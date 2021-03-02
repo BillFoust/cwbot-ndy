@@ -24,12 +24,11 @@ class ModuleMetaClass(abc.ABCMeta):
 
 
 class BaseModule(EventSubsystem.EventCapable,
-                 HeartbeatSubsystem.HeartbeatCapable):
+                 HeartbeatSubsystem.HeartbeatCapable, metaclass=ModuleMetaClass):
     """The parent class of every Module. All child classes MUST implement
     the requiredCapabilities attribute, which contains a list of capabilities
     that are required of the module's parent manager, and the _name attribute,
     which is a unique identifier for the class. """
-    __metaclass__ = ModuleMetaClass
     # construction will require the manager that invokes this object to 
     # have all capabilities in this list
     requiredCapabilities = []

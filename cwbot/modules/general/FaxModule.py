@@ -1,10 +1,10 @@
 import time
 import calendar
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import socket
 import pytz #@UnresolvedImport
-from urllib2 import HTTPError, URLError
+from urllib.error import HTTPError, URLError
 from collections import defaultdict
 from fuzzywuzzy import fuzz #@UnresolvedImport
 from cwbot.modules.BaseChatModule import BaseChatModule
@@ -136,14 +136,14 @@ class FaxModule(BaseChatModule):
 
 
     def initialize(self, state, initData):
-        newFaxList = map(FaxMonsterEntry.fromDict, state['faxes'])
+        newFaxList = list(map(FaxMonsterEntry.fromDict, state['faxes']))
         self._faxList = dict((e.code, e) for e in newFaxList)
         self._noMoreFaxesTime = None
 
 
     @property
     def state(self):
-        return {'faxes': map(FaxMonsterEntry.toDict, self._faxList.values())}
+        return {'faxes': list(map(FaxMonsterEntry.toDict, list(self._faxList.values())))}
 
     
     @property
@@ -160,7 +160,7 @@ class FaxModule(BaseChatModule):
         for i in range(numTries):
             try:
                 # download and interpret the page
-                txt = urllib2.urlopen(self.fax_list_url, 
+                txt = urllib.request.urlopen(self.fax_list_url, 
                                       timeout=self.timeout).read()
                 for c in range(32,128):
                     htmlCode = "&#{};".format(c)
@@ -180,7 +180,7 @@ class FaxModule(BaseChatModule):
         if not success:
             self.log("Failed to initialize fax list; using backup ({} entries)"
                      .format(len(self._faxList)))
-        for code,alias in self._alias.items():
+        for code,alias in list(self._alias.items()):
             code = code.strip().lower()
             if code in self._faxList:
                 self._faxList[code].addAlias(alias)
@@ -297,7 +297,7 @@ class FaxModule(BaseChatModule):
                             isPM, force=True)
         
         # first, check for exact code/name/alias matches
-        matches = [entry.code for entry in self._faxList.values() 
+        matches = [entry.code for entry in list(self._faxList.values()) 
                    if entry.contains(args)]
         if len(matches) == 1:
             return self.fax(matches[0], self._faxList[matches[0]].name, "", 
@@ -312,20 +312,20 @@ class FaxModule(BaseChatModule):
         scores = defaultdict(list)
         
         # make list of all possible names/codes/aliases
-        allNames = [name for entry in self._faxList.values() 
+        allNames = [name for entry in list(self._faxList.values()) 
                     for name in entry.nameList] 
         for s in allNames:
             score1 = fuzz.partial_token_set_ratio(simplify(s), sArgs)
             scores[score1].append(s)
-        allScores = scores.keys()
+        allScores = list(scores.keys())
         maxScore = max(allScores)
         for score in allScores:
             if score < maxScore - scoreDiff:
                 del scores[score]
         matches = []
-        for match in scores.values():
+        for match in list(scores.values()):
             matches.extend(match)
-        fuzzyMatchKeys = set(entry.code for entry in self._faxList.values() 
+        fuzzyMatchKeys = set(entry.code for entry in list(self._faxList.values()) 
                              for match in matches if entry.contains(match))
         
 
@@ -333,7 +333,7 @@ class FaxModule(BaseChatModule):
         detokenize = lambda x: ''.join(re.split(r"'|_|-| ", x)).lower()
         dArgs = detokenize(args)
         matches = [name for name in allNames if dArgs in detokenize(name)]
-        subsetMatchKeys = set(entry.code for entry in self._faxList.values() 
+        subsetMatchKeys = set(entry.code for entry in list(self._faxList.values()) 
                               for match in matches if entry.contains(match))
         
         ls = len(subsetMatchKeys)

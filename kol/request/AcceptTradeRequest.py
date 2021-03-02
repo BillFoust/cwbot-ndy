@@ -15,6 +15,6 @@ class AcceptTradeRequest(GenericRequest):
     def parseResponse(self):
         successPattern = PatternManager.getOrCompilePattern('tradeAccepted')
         if successPattern.search(self.responseText):
-            Report.trace('request', "Trade " + str(self.requestData['whichoffer']) "accepted successfully.")
+            Report.trace('request', "Trade " + str(self.requestData['whichoffer']) + "accepted successfully.")
         else:
             raise Error.Error("Unknown error accepted trade " + str(self.requestData['whichoffer']), Error.REQUEST_GENERIC)

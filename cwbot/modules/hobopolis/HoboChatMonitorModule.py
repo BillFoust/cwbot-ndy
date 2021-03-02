@@ -177,8 +177,8 @@ class HoboChatMonitorModule(BaseDungeonModule):
             
         Now = datetime.datetime.now(utc)
         self._lastDispatch = strToDt(state['lastDispatch'])
-        self._violations = dict((uname, map(ChatEvent.fromDict, vList))
-                                for uname,vList in state['violations'].items()) 
+        self._violations = dict((uname, list(map(ChatEvent.fromDict, vList)))
+                                for uname,vList in list(state['violations'].items())) 
         if (Now - self._lastDispatch) > datetime.timedelta(hours=25):
             self.cleanup()
             
@@ -188,8 +188,8 @@ class HoboChatMonitorModule(BaseDungeonModule):
         with self._lock:
             st = {'lastDispatch': dtToStr(self._lastDispatch), 
                   'lastCheck': dtToStr(self._lastCheck)}
-            v = dict((uname, map(ChatEvent.toDict, vList))
-                     for uname,vList in self._violations.items())
+            v = dict((uname, list(map(ChatEvent.toDict, vList)))
+                     for uname,vList in list(self._violations.items()))
             st['violations'] = v
             return st
 
@@ -231,7 +231,7 @@ class HoboChatMonitorModule(BaseDungeonModule):
                 lastD = self._lastDispatch
                 lastDStr = ("unknown time" if lastD is None 
                             else utcToArizona(lastD, '%c'))
-                violators = [u for u,v in self._violations.items() 
+                violators = [u for u,v in list(self._violations.items()) 
                              if numViolations(v) > self.numWarnings]
                 nViolations = len(violators)
                 if nViolations == 0:
@@ -277,7 +277,7 @@ class HoboChatMonitorModule(BaseDungeonModule):
             tf1 = "%d %b %I:%M %p"
             tf2 = "%I:%M %p"
             
-            violators = [u for u,v in self._violations.items() 
+            violators = [u for u,v in list(self._violations.items()) 
                          if numViolations(v) > self.numWarnings]    
             if len(violators) == 0 and not dailyDigest:
                 return    
@@ -387,7 +387,7 @@ class HoboChatMonitorModule(BaseDungeonModule):
         that have already been cleared. """
         toCheck = set([])
         clearedSet = set([])
-        for uname,turns in adventureCounts.items():
+        for uname,turns in list(adventureCounts.items()):
             if turns > self._hoboAdventureCounts.get(uname, 0):
                 if cleared(self._violations.get(uname, [])):
                     clearedSet.add(uname)

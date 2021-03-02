@@ -95,7 +95,7 @@ class CommunicationDirector(EventSubsystem.EventCapable,
         base = config['base']
         # loop through managers
         iData = InitData(self._s, self._c, self._props, self._inv, self._db)
-        for k,v in config.items():
+        for k,v in list(config.items()):
             if isinstance(v, dict):
                 cfg = v
                 
@@ -146,7 +146,7 @@ class CommunicationDirector(EventSubsystem.EventCapable,
                 # send responses to MailHandler
                 kmails = [r.kmail for r in responses]
                 self._mailHandler.respondToKmail(newKmail.info['id'],  
-                                                 map(Kmail.toPyKol, kmails))
+                                                 list(map(Kmail.toPyKol, kmails)))
             except Exception as e:
                 for r in responses:
                     r.manager.kmailFailed(r.module, r.kmail, e)
@@ -223,7 +223,7 @@ class CommunicationDirector(EventSubsystem.EventCapable,
                 self._log.debug("<< {}"
                                 .format(' '.join("<{}> {}"
                                                  .format(k,v) 
-                                                 for k,v in x.items())))
+                                                 for k,v in list(x.items()))))
                 # get replies from each manager
                 chats = []
                 t1 = time.time()
@@ -286,7 +286,7 @@ class CommunicationDirector(EventSubsystem.EventCapable,
         self._log.debug("Processing kmail with items: {}"
                         .format(', '.join("{} x{}"
                                          .format(k,v) 
-                                         for k,v in message.items.items())))
+                                         for k,v in list(message.items.items()))))
         responses = []
         if message.uid > 0:
             for m in self._managers:
@@ -376,7 +376,7 @@ class CommunicationDirector(EventSubsystem.EventCapable,
                          'inClan': True,
                          'karma': record['karma']}
                 self._clanMembers[uid].update(entry)
-            for uid, record in self._clanMembers.items():
+            for uid, record in list(self._clanMembers.items()):
                 if 'karma' not in record:
                     record['karma'] = 0
                     record['inClan'] = False

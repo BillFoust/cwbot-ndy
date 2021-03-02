@@ -5,7 +5,7 @@ import sys
 import cwbot.util.DebugThreading as threading
 from configObj.configobj import ConfigObj, ParseError, flatten_errors
 from configObj.validate import Validator
-from StringIO import StringIO
+from io import StringIO
 import kol.Error
 from cwbot.sys.CommunicationDirector import CommunicationDirector
 from cwbot.common.moduleSpec import MODULE_SPEC
@@ -21,7 +21,7 @@ from cwbot.util.tryRequest import tryRequest
 
 def _quoteConfig(cfg):
     try:
-        for k in cfg.keys():
+        for k in list(cfg.keys()):
             cfg[k] = _quoteConfig(cfg[k])
         return cfg
     except AttributeError:
@@ -160,7 +160,7 @@ class BotSystem(EventSubsystem.EventCapable,
 
     def _initializeChatChannels(self, config):
         """ Listen to appropriate chat channels """
-        channels = map(str.strip, config['system']['channels'].split(','))
+        channels = list(map(str.strip, config['system']['channels'].split(',')))
         mainChannel = channels[0]
         listenChannels = channels[1:]
         

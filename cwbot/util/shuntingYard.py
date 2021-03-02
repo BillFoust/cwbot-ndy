@@ -46,7 +46,7 @@ def infixToRpn(tokens, verbose):
             newTokens.append(tokens[idx])
     
     if verbose:
-        print("Tokens: {}".format(' '.join(newTokens)))
+        print(("Tokens: {}".format(' '.join(newTokens))))
     tokenList = [item for item in reversed(newTokens)]
     output = []
     stack = []
@@ -54,14 +54,14 @@ def infixToRpn(tokens, verbose):
     while tokenList:
         token = tokenList.pop()
         if verbose:
-            print("Token: {}".format(token))
+            print(("Token: {}".format(token)))
         if re.search(r'^(\d+\.?\d*)|(\.\d+)$', token) is not None:
             try:
                 output.append(int(token))
             except ValueError:
                 output.append(float(token))
                 if verbose:
-                    print("Added to output. O={}, S={}".format(output, stack))
+                    print(("Added to output. O={}, S={}".format(output, stack)))
         elif token in _precedence:
             while (stack and stack[-1] != "(" and
                    ((token not in _rightAssoc and 
@@ -70,21 +70,21 @@ def infixToRpn(tokens, verbose):
                 output.append(stack.pop())
             stack.append(token)
             if verbose:
-                print("Added to stack. O={}, S={}".format(output, stack))
+                print(("Added to stack. O={}, S={}".format(output, stack)))
         elif token == "(":
             stack.append(token)
             if verbose:
-                print("Added to stack. O={}, S={}".format(output, stack))
+                print(("Added to stack. O={}, S={}".format(output, stack)))
         elif token == ")":
             while stack and stack[-1] != "(":
                 output.append(stack.pop())
                 if verbose:
-                    print("Popped stack. O={}, S={}".format(output, stack))
+                    print(("Popped stack. O={}, S={}".format(output, stack)))
             if not stack:
                 raise ValueError("Unmatched parentheses")
             stack.pop()
             if verbose:
-                print("Popped '('. O={}, S={}".format(output, stack))
+                print(("Popped '('. O={}, S={}".format(output, stack)))
         else:
             raise ValueError("Invalid token")
     
@@ -94,17 +94,17 @@ def infixToRpn(tokens, verbose):
             raise ValueError("Unmatched parentheses")
         output.append(token)
         if verbose:
-            print("Popping stack. O={}, S={}".format(output, stack))
+            print(("Popping stack. O={}, S={}".format(output, stack)))
     return output
 
 def evalRpn(tokens, verbose=False):
     stack = []
 
     if verbose:
-        print("Evaluating tokens: {}".format(tokens))
+        print(("Evaluating tokens: {}".format(tokens)))
     while tokens:
         if verbose:
-            print("Tokens={}, stack={}".format(tokens, stack))
+            print(("Tokens={}, stack={}".format(tokens, stack)))
         token = tokens.pop(0)
         if verbose:
             print(token)
@@ -121,7 +121,7 @@ def evalInfix(expr, verbose=False):
     try:
         expr = expr.replace(" ", "")
         if verbose:
-            print("Evaluating {}".format(expr))
+            print(("Evaluating {}".format(expr)))
         tokens = tokenize(expr)
         if ''.join(tokens) != expr:
             if verbose:
@@ -129,17 +129,17 @@ def evalInfix(expr, verbose=False):
             raise ValueError("Invalid token detected")
         rpn = infixToRpn(tokens, verbose)
         if verbose:
-            print("RPN: {}".format(rpn))
+            print(("RPN: {}".format(rpn)))
         val = evalRpn(rpn, verbose)
         if verbose:
-            print("Value: {}".format(val))
+            print(("Value: {}".format(val)))
         return val
     except IndexError:
         raise ValueError("Unbalanced expression")
 
 if __name__ == "__main__":
     while True:
-        s = raw_input(">")
+        s = eval(input(">"))
         evalInfix(s, True)
     
     

@@ -53,7 +53,7 @@ class DreadTimelineModule(BaseDungeonModule):
         self._snapshots = state['snapshots']
         self._lastComplete = state['last']
         pastes = state.get('pastes', {})
-        self._pastes = {k: v for k,v in pastes.items()
+        self._pastes = {k: v for k,v in list(pastes.items())
                         if v.get('time', 0) > time.time() - 31 * 24 * 60 * 60}
         self._processLog(initData)
         self._initialized = True
@@ -90,7 +90,7 @@ class DreadTimelineModule(BaseDungeonModule):
                                            data={'style': 'list',
                                                  'keys': ['killed']})
             killed = [data['killed'] for data in d[0].data]
-            roundedKilled = map(lambda x: (x // 50) * 50, killed)
+            roundedKilled = [(x // 50) * 50 for x in killed]
             if roundedKilled > self._lastComplete:
                 self._lastComplete = roundedKilled
                 self._snapshots.append(self._getNewEvents(events))
@@ -123,8 +123,8 @@ class DreadTimelineModule(BaseDungeonModule):
             matchingNewEvents = list(eventDbMatch(events, dbm))
             for uid in players:
                 matchesUser = lambda x: x['userId'] == uid
-                playerEvents = filter(matchesUser, matchingNewEvents)
-                doneEvents = filter(matchesUser, matchingDoneEvents)
+                playerEvents = list(filter(matchesUser, matchingNewEvents))
+                doneEvents = list(filter(matchesUser, matchingDoneEvents))
                 playerTotalEvents = sum(pe['turns'] for pe in playerEvents)
                 doneTotalEvents = sum(de['turns'] for de in doneEvents)
                 eventDiff = playerTotalEvents - doneTotalEvents
@@ -165,7 +165,7 @@ class DreadTimelineModule(BaseDungeonModule):
                       .format("\n".join("{} = {} (#{})"
                                         .format(shortName, users[uid], uid)
                                         for uid, shortName
-                                            in nameShorthands.items())))
+                                            in list(nameShorthands.items()))))
         topHeader = _format.format(_areas[0], _areas[1], _areas[2]) + "\n"
         return timeHeader + nameHeader + topHeader
     
@@ -196,7 +196,7 @@ class DreadTimelineModule(BaseDungeonModule):
                 for e in killEvents:
                     timelineKills[area] += e['turns']
                     kills[e['userId']] += e['turns']
-                for uid, k in kills.items():
+                for uid, k in list(kills.items()):
                     txtList.append(" {}: {} kills"
                                    .format(nameShorthands[uid], k))
                     
@@ -242,7 +242,7 @@ class DreadTimelineModule(BaseDungeonModule):
     # convert a timeline to a multiline string to display.
     def _timelineString(self, timeline):
         def balanceLines(alines, extendString):
-            totalLines = map(len, alines)
+            totalLines = list(map(len, alines))
             maxLines = max(totalLines)
             for lines in alines:
                 lines.extend([extendString] * (maxLines - len(lines)))
@@ -260,20 +260,20 @@ class DreadTimelineModule(BaseDungeonModule):
             for area in range(3):
                 roundedKills = (t['kills'][area] // 50) * 50
                 if roundedKills > lastKills[area]:
-                    print("Area {}, last={}, new={}"
-                          .format(area, lastKills[area], roundedKills))
+                    print(("Area {}, last={}, new={}"
+                          .format(area, lastKills[area], roundedKills)))
                     lastKills[area] = roundedKills
                     areaLines[area].append("-+- {}% complete"
                                            .format(int(roundedKills // 10)))
                 else:
-                    print("Area {}, last={}, current={}"
-                          .format(area, lastKills[area], roundedKills))
+                    print(("Area {}, last={}, current={}"
+                          .format(area, lastKills[area], roundedKills)))
             balanceLines(areaLines, "-+-")
         
         # now format it correctly
         for a in range(3):
-            areaLines[a] = map(lambda x: x[:_maxLen], areaLines[a])
-        lines = zip(*areaLines)
+            areaLines[a] = [x[:_maxLen] for x in areaLines[a]]
+        lines = list(zip(*areaLines))
         txtLines = [_format.format(*t) for t in lines]
         self.debugLog("Built timeline string in {} seconds"
                       .format(time.time() - t1))
@@ -283,21 +283,21 @@ class DreadTimelineModule(BaseDungeonModule):
     def _getShortenedNames(self, events):
         users = {e['userId']: e['userName'] for e in events if e['db-match']}
         userNamesFixed = {uid: ''.join(name.split()) 
-                          for uid,name in users.items()}
+                          for uid,name in list(users.items())}
         userNamesDone = {}
         nameLength = _shortestName
         while userNamesFixed:
             counts = defaultdict(int)
             # shorten names
             newUserNames = {uid: name[:nameLength]
-                            for uid, name in userNamesFixed.items()}
+                            for uid, name in list(userNamesFixed.items())}
             for name in newUserNames:
                 counts[name] += 1
             userNamesDone.update({uid: name 
-                                  for uid, name in newUserNames.items()
+                                  for uid, name in list(newUserNames.items())
                                   if counts[name] <= 1})
             userNamesFixed = {uid: name 
-                              for uid, name in userNamesFixed.items()
+                              for uid, name in list(userNamesFixed.items())
                               if counts[newUserNames[uid]] > 1}
         return userNamesDone
             
@@ -320,7 +320,7 @@ class DreadTimelineModule(BaseDungeonModule):
                 return ("Error with timeline: {}".format(data['url']))
             return "Timeline for current instance: {}".format(data['url'])
         elif cmd == "timelines":
-            timelines = self._pastes.values()
+            timelines = list(self._pastes.values())
             timelines.sort(key=lambda x: x['time'], reverse=True)
             strings = []
             for item in timelines:

@@ -55,8 +55,8 @@ class KeywordModule(BaseChatModule):
 
 
     def _configure(self, config):
-        self._command = map(
-                str.lower, stringToList(config.get('command', 'UNCONFIGURED')))
+        self._command = list(map(
+                str.lower, stringToList(config.get('command', 'UNCONFIGURED'))))
         config['command'] = listToString(self._command)
         
         self._helpText = config.setdefault('helptext', 'UNCONFIGURED')
@@ -68,7 +68,7 @@ class KeywordModule(BaseChatModule):
                             "I don't have a unique match for %arg%.")
         config['text'] = ruleDict
         
-        for keyword,rule in ruleDict.items():
+        for keyword,rule in list(ruleDict.items()):
             self._rules[keyword.strip().lower()] = rule.decode('string_escape')
         self.debugLog("Added {} keyword-rules.".format(len(self._rules)))
 
@@ -81,7 +81,7 @@ class KeywordModule(BaseChatModule):
                 rules.append(self._rules['__default__'])
             else:
                 query = simplify(args)
-                for key,rule in self._rules.items():
+                for key,rule in list(self._rules.items()):
                     k = simplify(key)
                     if not key.startswith("__") and (k in query or query in k):
                         rules.append(rule)
@@ -98,6 +98,6 @@ class KeywordModule(BaseChatModule):
     def _annotate(self, rule, args):
         rule = rule.replace("%arg%", args)
         rule = rule.replace("%keywords%", 
-                            ', '.join(item for item in self._rules.keys()
+                            ', '.join(item for item in list(self._rules.keys())
                                       if not item.startswith("__")))
         return rule

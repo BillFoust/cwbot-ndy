@@ -1,4 +1,4 @@
-import TestData
+from . import TestData
 from kol.request.BountyHunterRequest import BountyHunterRequest
 import unittest
 
@@ -14,7 +14,7 @@ class Main(unittest.TestCase):
             
             bounties = response['dailyBounties']
             
-            self.assertEquals(len(bounties), 3, 'Bounty Hunter Hunter should have 3 daily bounties available')
+            self.assertEqual(len(bounties), 3, 'Bounty Hunter Hunter should have 3 daily bounties available')
             for bountyItem in bounties:
                 self.assertTrue(bountyItem['isBounty'])
 

@@ -1,4 +1,4 @@
-from GenericRequest import GenericRequest
+from .GenericRequest import GenericRequest
 from kol.manager import PatternManager
 from kol.util import ChatUtils
 from kol.util import Report

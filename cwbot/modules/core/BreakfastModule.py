@@ -159,7 +159,7 @@ class BreakfastModule(BaseModule):
 
         if self._meat > 0 or len(self._items) > 0:
             itemTxt = '\n'.join("{}x {}".format(qty, name) 
-                                for name,qty in self._items.items() 
+                                for name,qty in list(self._items.items()) 
                                 if qty != 0)
             self.log("Breakfast results:\nGot {} meat and the following "
                      "items:\n{}".format(self._meat, itemTxt))

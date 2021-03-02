@@ -56,7 +56,7 @@ def botProcessKmail(context, **kwargs):
         try:
             r.doRequest()
             m["text"] = "Effect successfully removed!"
-        except Error.Error, inst:
+        except Error.Error as inst:
             if inst.code == Error.EFFECT_NOT_FOUND:
                 m["text"] = "I do not currently have that effect."
                 m["items"] = items
@@ -81,7 +81,7 @@ def botProcessChat(context, **kwargs):
             try:
                 r.doRequest()
                 resp = "Effect successfully removed!"
-            except Error.Error, inst:
+            except Error.Error as inst:
                 if inst.code == Error.EFFECT_NOT_FOUND:
                     resp = "I do not currently have that effect."
                 elif inst.code == Error.ITEM_NOT_FOUND:

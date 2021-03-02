@@ -107,7 +107,7 @@ class SmoreModule(BaseKmailModule):
                                        .addItems(message.items))
             self.inventoryManager.refreshInventory()
             mallowsBefore = inv.get(3128, 0)
-            print mallowsBefore
+            print(mallowsBefore)
             try:
                 for _ in range(min(mallows, 40)):
                     r = CursePlayerRequest(self.session, message.uid, 5066)
@@ -116,7 +116,7 @@ class SmoreModule(BaseKmailModule):
                 pass
             self.inventoryManager.refreshInventory()
             mallowsAfter = self.inventoryManager.inventory().get(3128, 0)
-            print mallowsAfter
+            print(mallowsAfter)
             mallowsSent = mallowsBefore - mallowsAfter
             
             returnItems = message.items
@@ -126,7 +126,7 @@ class SmoreModule(BaseKmailModule):
             else:
                 returnItems[3128] -= mallowsSent
                 returnItems[3128] = min(returnItems[3128], mallowsAfter)
-            print returnItems
+            print(returnItems)
             
             sendStuffBack = returnItems or message.meat > 0
             

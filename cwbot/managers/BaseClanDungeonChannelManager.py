@@ -196,7 +196,7 @@ class BaseClanDungeonChannelManager(MultiChannelManager):
     def _eventCallback(self, eData):
         MultiChannelManager._eventCallback(self, eData)
         if eData.subject == "new_raid_log":
-            raidlog = dict((k,v) for k,v in eData.data.items())
+            raidlog = dict((k,v) for k,v in list(eData.data.items()))
             self.lastEvents = raidlog
             if not self.__initialized:
                 return

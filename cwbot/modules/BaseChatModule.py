@@ -1,4 +1,4 @@
-from BaseModule import BaseModule
+from .BaseModule import BaseModule
 
 
 class BaseChatModule(BaseModule):

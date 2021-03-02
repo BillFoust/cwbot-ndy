@@ -148,7 +148,7 @@ class WarbearBlackboxModule(BaseKmailModule):
         
     def _getDesired(self, txt):
         matches = []
-        for name, data in self._items.items():
+        for name, data in list(self._items.items()):
             if any(True for nick in data['nicknames'] if nick in txt.lower()):
                 matches.append(name)
         if len(matches) != 1:

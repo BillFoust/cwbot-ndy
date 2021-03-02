@@ -50,7 +50,7 @@ class ClanDungeonLootRequest(GenericRequest):
                 hobo.append(item)
             elif item in self._dreadLoot:
                 dread.append(item)
-                for boss, drops in self._dreadHardLoot.items():
+                for boss, drops in list(self._dreadHardLoot.items()):
                     if item in drops:
                         hardMode[boss] = _nameKey(match.group(2))
 

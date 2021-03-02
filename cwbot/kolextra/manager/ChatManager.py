@@ -1,13 +1,13 @@
 import logging
 import re
 from unidecode import unidecode
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 from kol.request.GetChatMessagesRequest import GetChatMessagesRequest
 from kol.request.OpenChatRequest import OpenChatRequest
 from kol.util import ChatUtils
 from cwbot.util.tryRequest import tryRequest
-import Queue
-from MessageDispatcher import MessageDispatcher
+import queue
+from .MessageDispatcher import MessageDispatcher
 
 MAX_CHAT_LENGTH = 200
 
@@ -80,10 +80,10 @@ class ChatManager(object):
                 txt = self._entityRegex.sub(r'&#\1;', txt)
                 
                 # convert to unicode (KoL/pykol has weird encoding)
-                txtUnicode = u''.join(unichr(ord(c)) for c in txt)
+                txtUnicode = ''.join(chr(ord(c)) for c in txt)
                 txtUnicode = self._parser.unescape(txtUnicode)
                 if txtUnicode:
-                    if any(c in txtUnicode[0] for c in [u"\xbf", u"\xa1"]):
+                    if any(c in txtUnicode[0] for c in ["\xbf", "\xa1"]):
                         txtUnicode = txtUnicode[1:]
                 chat["text"] = unidecode(txtUnicode)
             
@@ -168,7 +168,7 @@ class ChatManager(object):
         for message in messages:
             chatToSend = chatInfo
             chatToSend["text"] = message
-            replyQueue = Queue.Queue()
+            replyQueue = queue.Queue()
             self._dispatcher.dispatch(chatToSend, replyQueue)
 
             if waitForReply:
