@@ -8,7 +8,7 @@ class ClanConsultRequest(GenericRequest):
         self.requestData['preaction'] = 'dotestlove'
         # self.requestData['whichfloor'] = '1'
         self.requestData['testlove'] = playerId
-        self.requestData['q1'] = 'pepper'
+        self.requestData['q1'] = 'pizza'
         self.requestData['q2'] = 'robin'
         self.requestData['q3'] = 'thin'
         #def setWho(self, who):
